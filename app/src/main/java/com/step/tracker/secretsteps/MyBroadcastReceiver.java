@@ -32,11 +32,19 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
         spYesterdayPassiveSteps = arg0.getSharedPreferences("YesterdayPassiveInfo",0);
         editor2 = spYesterdayPassiveSteps.edit();
         editor2.putLong("YesterdayPassiveSteps",passiveSteps);
-        Log.d(TAG, "onReceive: passive stepsAB:" + arg0.getSharedPreferences("YesterdayPassiveSteps",0));
+        editor2.commit();
+//        Log.d(TAG, "onReceive: passive stepsAB:" + arg0.getSharedPreferences("YesterdayPassiveSteps",0));
 
         spYesterdayWorkouts = arg0.getSharedPreferences("YesterdayWorkoutInfo",0);
         editor3 = spYesterdayWorkouts.edit();
         editor3.putInt("YesterdayWorkout",workouts);
+        editor3.commit();
+
+        int workout = spYesterdayWorkouts.getInt("YesterdayPassiveSteps",0);
+        long active = spYesterdayActiveSteps.getLong("YesterdayActiveSteps",0);
+        long passive = spYesterdayPassiveSteps.getLong("YesterdayPassiveSteps",0);
+
+
 
     }
 }

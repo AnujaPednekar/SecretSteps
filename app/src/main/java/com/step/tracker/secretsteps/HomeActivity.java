@@ -60,11 +60,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private int totalPassiveSteps ;
     private int totalWorkouts;
     SharedPreferences sharedPreferences,sharedPreferencesActive,sharedPreferencesWorkout,sharedPreferencesUserName;
-    SharedPreferences.Editor editor1,editor2,editor3;
+    SharedPreferences.Editor editor1, editor2;
 
     long ysPassive,ysActive;
     private boolean alarmSet=false;
-
+//    int activeSteps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +73,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         ButterKnife.bind(this);
         sensorManagerHome = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         beginWorkoutBtn.setOnClickListener(HomeActivity.this);
-//get activesteps for steps
+//get activesteps,passivesteps,username and workouts
         sharedPreferencesActive = getSharedPreferences("ActiveStepsInfo",MODE_PRIVATE);
         int activeSteps = sharedPreferencesActive.getInt("ActiveSteps", 0);
+        totalActiveSteps = activeSteps;
+
+        sharedPreferences = getSharedPreferences("PassiveStepsInfo",MODE_PRIVATE);
+        int passiveSteps = sharedPreferences.getInt("PassiveSteps",0);
 
         sharedPreferencesWorkout = getSharedPreferences("WorkoutInfo",MODE_PRIVATE);
         int workout = sharedPreferencesWorkout.getInt("WorkoutCount",0);
@@ -85,13 +89,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         activeWorkouts.setText("Workouts: "+workout);
         todayActiveTv.setText("Active Steps: "+activeSteps);
-        todayPassiveTv.setText("Passive Steps: "+  (totalPassiveSteps-totalActiveSteps));
-        sharedPreferences = getSharedPreferences("PassiveStepsInfo",MODE_PRIVATE);
+
+        todayPassiveTv.setText("Passive Steps: "+  (passiveSteps-activeSteps));
         welcome.setText("    Welcome "+userName);
+
+        setAlarm();
         }
-
-
-
 
     @Override
     protected void onResume() {
@@ -115,22 +118,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode==1 && resultCode==RESULT_OK){
+
             totalActiveSteps = totalActiveSteps + data.getIntExtra("result",0);
             totalWorkouts = data.getIntExtra("workoutCount",0);
-            Log.d(TAG, "onActivityResult:totalWorkouts "+totalWorkouts);
-            todayActiveTv.setText("Active Steps : "+(totalActiveSteps));
+
+            todayActiveTv.setText("Active Steps : "+totalActiveSteps);
             activeWorkouts.setText("Workouts: "+totalWorkouts);
             //saving active steps
-            sharedPreferencesActive = getSharedPreferences("ActiveStepsInfo",0);
+
             editor1 = sharedPreferencesActive.edit();
             editor1.putLong("Timestamp",Calendar.getInstance().getTimeInMillis());
             editor1.putInt("ActiveSteps",totalActiveSteps);
             editor1.commit();
 
-            sharedPreferencesWorkout = getSharedPreferences("WorkoutInfo",0);
-            editor2 = sharedPreferencesWorkout.edit();
-            editor2.putInt("WorkoutCount",totalWorkouts);
-            editor2.commit();
 
         }
     }
@@ -139,18 +139,31 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onSensorChanged(SensorEvent event) {
         totalPassiveSteps = (int)(event.values[0]);
         todayPassiveTv.setText("Passive steps: "+ (totalPassiveSteps-totalActiveSteps));
-        //saving passive steps
-        editor3 = sharedPreferences.edit();
+        //saving passive steps,timestamp
+        editor2 = sharedPreferences.edit();
         long stamp =  Calendar.getInstance().getTimeInMillis();
-        editor3.putLong("Timestamp",stamp);
-        editor3.putInt("PassiveSteps",(totalPassiveSteps));
-        editor3.commit();
+        editor2.putLong("Timestamp",stamp);
+        editor2.putInt("PassiveSteps",(totalPassiveSteps));
+        editor2.commit();
 
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    private void setAlarm() {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 30);
+
+        Intent intent = new Intent(HomeActivity.this, MyBroadcastReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(),pendingIntent);
     }
 
 }

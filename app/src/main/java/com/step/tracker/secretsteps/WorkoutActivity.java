@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.util.Calendar;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -40,8 +42,8 @@ public class WorkoutActivity extends AppCompatActivity implements View.OnClickLi
     private SensorManager sensorManager;
     int totalStepSinceReboot;
     private String TAG = WorkoutActivity.class.getSimpleName();
-    SharedPreferences sharedPreferencesActive;
-    SharedPreferences.Editor editor;
+    SharedPreferences sharedPreferencesActive,sharedPreferencesWorkout;
+    SharedPreferences.Editor editor1,editor2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,13 @@ public class WorkoutActivity extends AppCompatActivity implements View.OnClickLi
         totalStepsTv.setText("0");
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         workoutCount++;
+
+        //saving workouts
+        sharedPreferencesWorkout = getSharedPreferences("WorkoutInfo",0);
+        editor1 = sharedPreferencesWorkout.edit();
+        editor1.putInt("WorkoutCount",workoutCount);
+        editor1.commit();
+
         startChronometer();
         endWorkoutBtn.setOnClickListener(this);
 //        sharedPreferencesActive = getSharedPreferences("ActiveStepsInfo",MODE_PRIVATE);
@@ -84,7 +93,13 @@ public class WorkoutActivity extends AppCompatActivity implements View.OnClickLi
         totalStepSinceReboot = (int) (event.values[0]);
         todayActiveSteps = totalStepSinceReboot - passiveSteps;
         totalStepsTv.setText(String.valueOf(todayActiveSteps));
-        sharedPreferencesActive = getSharedPreferences("ActiveStepsInfo",0);
+        //saving active steps
+//        sharedPreferencesActive = getSharedPreferences("ActiveStepsInfo",0);
+//        editor2 = sharedPreferencesActive.edit();
+//        editor2.putInt("ActiveSteps",todayActiveSteps);
+//        editor2.putLong("Timestamp",Calendar.getInstance().getTimeInMillis());
+//        editor2.commit();
+
 
     }
 

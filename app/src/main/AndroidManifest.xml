@@ -18,8 +18,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.step.tracker.secretsteps.HomeActivity" />
-        <activity android:name="com.step.tracker.secretsteps.WorkoutActivity"></activity>
+        <activity android:name="com.step.tracker.secretsteps.HomeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.step.tracker.secretsteps.WorkoutActivity"
+            android:screenOrientation="portrait"/>
         <receiver android:name="MyBroadcastReceiver"></receiver>
     </application>
 
