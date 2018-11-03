@@ -42,7 +42,7 @@ public class WorkoutActivity extends AppCompatActivity implements View.OnClickLi
     private SensorManager sensorManager;
     int totalStepSinceReboot;
     private String TAG = WorkoutActivity.class.getSimpleName();
-    SharedPreferences sharedPreferencesActive,sharedPreferencesWorkout;
+    SharedPreferences sharedPreferencesWorkoutActive,sharedPreferencesWorkout;
     SharedPreferences.Editor editor1,editor2;
 
     @Override
@@ -94,13 +94,11 @@ public class WorkoutActivity extends AppCompatActivity implements View.OnClickLi
         todayActiveSteps = totalStepSinceReboot - passiveSteps;
         totalStepsTv.setText(String.valueOf(todayActiveSteps));
         //saving active steps
-//        sharedPreferencesActive = getSharedPreferences("ActiveStepsInfo",0);
-//        editor2 = sharedPreferencesActive.edit();
-//        editor2.putInt("ActiveSteps",todayActiveSteps);
-//        editor2.putLong("Timestamp",Calendar.getInstance().getTimeInMillis());
-//        editor2.commit();
-
-
+        sharedPreferencesWorkoutActive = getSharedPreferences("ActiveStepsInfoWork",0);
+        editor2 = sharedPreferencesWorkoutActive.edit();
+        editor2.putInt("ActiveStepsWork",todayActiveSteps);
+        editor2.putLong("Timestamp",Calendar.getInstance().getTimeInMillis());
+        editor2.commit();
     }
 
 
