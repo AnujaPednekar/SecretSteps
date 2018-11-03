@@ -36,32 +36,21 @@ public class WorkoutActivity extends AppCompatActivity implements View.OnClickLi
     Chronometer chronometer;
 
     public int todayActiveSteps;
-    static int workoutCount = 0;
-    long minutes;
-    long seconds;
+    static int workoutCount;
     private SensorManager sensorManager;
     int totalStepSinceReboot;
     private String TAG = WorkoutActivity.class.getSimpleName();
-    SharedPreferences sharedPreferencesActive,sharedPreferencesWorkout;
-    SharedPreferences.Editor editor1,editor2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
         ButterKnife.bind(this);
-        Intent intent = getIntent();
-        todayActiveSteps = intent.getIntExtra("todayActiveSteps", 0);
-        totalStepsTv.setText("0");
+//        Intent intent = getIntent();
+//        todayActiveSteps = intent.getIntExtra("todayActiveSteps", 0);
+//        totalStepsTv.setText("0");
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         workoutCount++;
-
-        //saving workouts
-        sharedPreferencesWorkout = getSharedPreferences("WorkoutInfo",0);
-        editor1 = sharedPreferencesWorkout.edit();
-        editor1.putInt("WorkoutCount",workoutCount);
-        editor1.commit();
-
         startChronometer();
         endWorkoutBtn.setOnClickListener(this);
 //        sharedPreferencesActive = getSharedPreferences("ActiveStepsInfo",MODE_PRIVATE);

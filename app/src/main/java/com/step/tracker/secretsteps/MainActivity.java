@@ -21,10 +21,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final EditText nameEditText = (EditText) findViewById(R.id.ed_name);
-
-//        sharedPreferencesFirstLaunch = getSharedPreferences("PREFERENCE", MODE_PRIVATE);
-//        SharedPreferences.Editor editor1 = sharedPreferencesFirstLaunch.edit();
-
         Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
                 .getBoolean("isFirstRun", false);
 
