@@ -51,6 +51,7 @@ public class WorkoutActivity extends AppCompatActivity implements View.OnClickLi
 //        totalStepsTv.setText("0");
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         workoutCount++;
+
         startChronometer();
         endWorkoutBtn.setOnClickListener(this);
 //        sharedPreferencesActive = getSharedPreferences("ActiveStepsInfo",MODE_PRIVATE);
@@ -82,14 +83,16 @@ public class WorkoutActivity extends AppCompatActivity implements View.OnClickLi
         totalStepSinceReboot = (int) (event.values[0]);
         todayActiveSteps = totalStepSinceReboot - passiveSteps;
         totalStepsTv.setText(String.valueOf(todayActiveSteps));
-        //saving active steps
-//        sharedPreferencesActive = getSharedPreferences("ActiveStepsInfo",0);
-//        editor2 = sharedPreferencesActive.edit();
-//        editor2.putInt("ActiveSteps",todayActiveSteps);
-//        editor2.putLong("Timestamp",Calendar.getInstance().getTimeInMillis());
-//        editor2.commit();
 
+        int activeY = getSharedPreferences("YesterdayActiveInfo",0).getInt("YesterdayActiveSteps",0);
+        int passiveY = getSharedPreferences("YesterdayPassiveInfo",0).getInt("YesterdayPassiveSteps",0);
+        int workoutY = getSharedPreferences("YesterdayWorkoutInfo",0).getInt("YesterdayWorkout",0);
 
+        int activeT = getSharedPreferences("ActiveStepsInfo",0).getInt("ActiveSteps",0);
+        int passiveT = getSharedPreferences("PassiveSubInfo",0).getInt("PassiveSubSteps",0);
+        int workoutsT = getSharedPreferences("WorkoutInfo",0).getInt("WorkoutCount",0);
+
+        HomeActivity.getInstace().updateToday(activeT,passiveT,workoutsT);
     }
 
 

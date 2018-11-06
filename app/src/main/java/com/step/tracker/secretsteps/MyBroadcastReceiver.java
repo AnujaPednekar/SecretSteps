@@ -14,42 +14,44 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
     SharedPreferences spYesterdayTotalSteps, spYesterdayPassiveSteps, spYesterdayActiveSteps , spYesterdayWorkouts;
     SharedPreferences.Editor editor1,editor2,editor3;
     @Override
-    public void onReceive(Context arg0, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
 
         //getting today's data
-        SharedPreferences sharedPreferencesWorkout = arg0.getSharedPreferences("WorkoutInfo",Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferencesWorkout = context.getSharedPreferences("WorkoutInfo",Context.MODE_PRIVATE);
         int workouts = sharedPreferencesWorkout.getInt("WorkoutCount",0);
 
-        SharedPreferences sharedPreferencesPassive = arg0.getSharedPreferences("PassiveSubInfo", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferencesPassive = context.getSharedPreferences("PassiveSubInfo", Context.MODE_PRIVATE);
         int passiveSteps = sharedPreferencesPassive.getInt("PassiveSubSteps", 0);
 
-        SharedPreferences sharedPreferencesActive = arg0.getSharedPreferences("ActiveStepsInfo", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferencesActive = context.getSharedPreferences("ActiveStepsInfo", Context.MODE_PRIVATE);
         int activeSteps = sharedPreferencesActive.getInt("ActiveSteps", 0);
 
         //storing today's data to yesterday sp
-        spYesterdayActiveSteps = arg0.getSharedPreferences("YesterdayActiveInfo",0);
+        spYesterdayActiveSteps = context.getSharedPreferences("YesterdayActiveInfo",0);
         editor1 = spYesterdayActiveSteps.edit();
         editor1.putInt("YesterdayActiveSteps",activeSteps);
         editor1.commit();
 
-        spYesterdayPassiveSteps = arg0.getSharedPreferences("YesterdayPassiveInfo",0);
+        spYesterdayPassiveSteps = context.getSharedPreferences("YesterdayPassiveInfo",0);
         editor2 = spYesterdayPassiveSteps.edit();
         editor2.putInt("YesterdayPassiveSteps",passiveSteps);
         editor2.commit();
 
-        spYesterdayWorkouts = arg0.getSharedPreferences("YesterdayWorkoutInfo",0);
+        spYesterdayWorkouts = context.getSharedPreferences("YesterdayWorkoutInfo",0);
         editor3 = spYesterdayWorkouts.edit();
         editor3.putInt("YesterdayWorkout",workouts);
         editor3.commit();
 
-        arg0.getSharedPreferences("Alarm", 0).edit()
-                .putBoolean("AlarmSet", true).commit();
 
-        HomeActivity.a = 20;
-//        int workout = spYesterdayWorkouts.getInt("YesterdayWorkout",0);
-//        int active = spYesterdayActiveSteps.getInt("YesterdayActiveSteps",0);
-//        int passive = spYesterdayPassiveSteps.getInt("YesterdayPassiveSteps",0);
+        sharedPreferencesActive.edit().putInt("ActiveSteps",0).commit();
+        sharedPreferencesPassive.edit().putInt("PassiveSubSteps",0).commit();
+        sharedPreferencesWorkout.edit().putInt("WorkoutCount",0).commit();
 
+        int active = context.getSharedPreferences("YesterdayActiveInfo",0).getInt("YesterdayActiveSteps",0);
+        int passive = context.getSharedPreferences("YesterdayPassiveInfo",0).getInt("YesterdayPassiveSteps",0);
+        int workout = context.getSharedPreferences("YesterdayWorkoutInfo",0).getInt("YesterdayWorkout",0);
 
+        HomeActivity.getInstace().updateToday(0,0,0);
+        HomeActivity.getInstace().updateYesterday((activeSteps),(passiveSteps),(workouts));
     }
 }

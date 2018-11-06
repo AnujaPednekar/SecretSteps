@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/gradient_blue"
+    android:background="@drawable/multicolor"
 
     tools:context=".WorkoutActivity">
     <TextView

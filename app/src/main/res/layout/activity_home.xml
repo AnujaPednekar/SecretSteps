@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_blue"
+    android:background="@drawable/multicolor"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".HomeActivity">
@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         android:text="Welcome"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:textSize="25dp" />
 
     <TextView
@@ -27,8 +27,8 @@
         android:layout_marginBottom="40dp"
         android:fontFamily="@font/expressway"
         android:text="to Active + Passive Step tracker"
-        android:textColor="@android:color/black"
-        android:textSize="20dp" />
+        android:textColor="@android:color/white"
+        android:textSize="18dp" />
 
 
     <TextView
@@ -86,41 +86,38 @@
         android:textColor="@android:color/white"
         android:textSize="15dp" />
 
-
     <TextView
-        android:id="@+id/tv_yesterday_total"
+        android:id="@+id/tv_yesterday_workouts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/expressway"
-        android:text="Total- 0"
-        android:textColor="@android:color/black" />
-
-    <TextView
-        android:id="@+id/tv_yesterday_passive"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/expressway"
-        android:text="Passive Tracked- 0"
-        android:textColor="@android:color/black" />
+        android:text="Total workouts: 0"
+        android:textColor="@android:color/white" />
 
     <TextView
         android:id="@+id/tv_yesterday_active"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/expressway"
-        android:text="Actively Tracked- 0"
-        android:textColor="@android:color/black" />
+        android:text="Actively Tracked: 0"
+        android:textColor="@android:color/white" />
 
     <TextView
-        android:id="@+id/tv_yesterday_workouts"
+        android:id="@+id/tv_yesterday_passive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/expressway"
+        android:text="Passive Tracked: 0"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/tv_yesterday_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/expressway"
+        android:text="Total: 0"
         android:paddingBottom="30dp"
-        android:text="Total workouts- 0"
-        android:textColor="@android:color/black" />
-
-
+        android:textColor="@android:color/white" />
     <Button
         android:id="@+id/btn_begin_workout"
         android:layout_width="wrap_content"
