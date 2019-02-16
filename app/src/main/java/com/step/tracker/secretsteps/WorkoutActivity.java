@@ -92,7 +92,7 @@ public class WorkoutActivity extends AppCompatActivity implements View.OnClickLi
         int passiveT = getSharedPreferences("PassiveSubInfo",0).getInt("PassiveSubSteps",0);
         int workoutsT = getSharedPreferences("WorkoutInfo",0).getInt("WorkoutCount",0);
 
-        HomeActivity.getInstace().updateToday(activeT,passiveT,workoutsT);
+//        HomeActivity.getInstace().updateToday(activeT,passiveT,workoutsT);
     }
 
 

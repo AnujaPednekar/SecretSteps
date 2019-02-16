@@ -52,15 +52,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @BindView(R.id.welcome)
     TextView welcome;
+
+    @BindView(R.id.tv_total_today)
+    TextView todayTotal;
+
     private int RESQUEST_CODE = 1;
     private SensorManager sensorManagerHome;
     private int totalActiveSteps;
     private int totalPassiveSteps;
     private int totalWorkouts;
     SharedPreferences sharedPreferences, sharedPreferencesActive, sharedPreferencesPassive, sharedPreferencesWorkout, sharedPreferencesUserName;
+    SharedPreferences copyActiveSP,copyPassiveSP,copyWorkoutSP;
     SharedPreferences.Editor editor1, editor2, editor3, editor4;
     int yesPassive, yesActive, yesWorkout;
-    private boolean alarmSet = false;
     private int activeSteps, passiveSub;
     int workout;
     private static HomeActivity homeActivityRunningInstance;
@@ -91,43 +95,42 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         sharedPreferencesUserName = getSharedPreferences("UserNameInfo", 0);
         String userName = sharedPreferencesUserName.getString("UserName", "");
 
-        Boolean isAlarmSet = getSharedPreferences("AlarmInfo", 0)
-                .getBoolean("isAlarmSet", false);
-        if(isAlarmSet==false){
-        setAlarm();
-        }
+        copyActiveSP = getSharedPreferences("CopyActiveInfo", Context.MODE_PRIVATE);
+        copyPassiveSP = getSharedPreferences("CopyPassiveInfo", Context.MODE_PRIVATE);
+        copyWorkoutSP = getSharedPreferences("CopyWorkoutInfo",Context.MODE_PRIVATE);
+
+        welcome.setText("Welcome " + userName);
 
         yesWorkout = getSharedPreferences("YesterdayWorkoutInfo", 0).getInt("YesterdayWorkout", 0);
         yesActive = getSharedPreferences("YesterdayActiveInfo", 0).getInt("YesterdayActiveSteps", 0);
         yesPassive = getSharedPreferences("YesterdayPassiveInfo", 0).getInt("YesterdayPassiveSteps", 0);
 
+//        int toWorkout = (getSharedPreferences("WorkoutInfo", 0).getInt("WorkoutCount", 0));
+//        int yesWorkout = getSharedPreferences("YesterdayWorkoutInfo", 0).getInt("YesterdayWorkout", 0);
+
         //setting today's steps
-        activeWorkouts.setText("Workouts: " +((getSharedPreferences("WorkoutInfo",0).getInt("WorkoutCount",0))-(getSharedPreferences("YesterdayWorkoutInfo", 0).getInt("YesterdayWorkout", 0))));
-        todayActiveTv.setText("Active Steps: " + (activeSteps - yesActive));
-        todayPassiveTv.setText("Passive Steps: " +(getSharedPreferences("PassiveSubInfo",0).getInt("PassiveSubSteps",0) - (getSharedPreferences("YesterdayPassiveInfo",0).getInt("YesterdayPassiveSteps",0))));
-        welcome.setText("Welcome " + userName);
+        activeWorkouts.setText("Workouts: " +((getSharedPreferences("WorkoutInfo",0).getInt("WorkoutCount",0))-copyWorkoutSP.getInt("CopyWorkout",0)));
+
+        todayActiveTv.setText("Active Steps: " + (activeSteps-copyActiveSP.getInt("CopyActive",0)));
+
+        int rm1 = (getSharedPreferences("PassiveSubInfo",0).getInt("PassiveSubSteps",0) - copyPassiveSP.getInt("CopyPassive",0));
+        todayPassiveTv.setText("Passive Steps: " +(rm1));
+
+        todayTotal.setText("Total Step Count: "+((activeSteps - copyActiveSP.getInt("CopyActive",0))+((getSharedPreferences("PassiveSubInfo",0).getInt("PassiveSubSteps",0) - copyPassiveSP.getInt("CopyPassive",0))))) ;
+
 
         //setting yesterday's steps
+        yesterdayTotal.setText("Total Step Count: " + ((yesActive) + (yesPassive)));
         yesterdayActive.setText("Active Steps: " + (getSharedPreferences("YesterdayActiveInfo", 0).getInt("YesterdayActiveSteps", 0)));
         yesterdayPassive.setText("Passive Steps: " + (getSharedPreferences("YesterdayPassiveInfo", 0).getInt("YesterdayPassiveSteps", 0)));
         yesterdayWorkouts.setText("Workouts: " + (getSharedPreferences("YesterdayWorkoutInfo", 0).getInt("YesterdayWorkout", 0)));
-        yesterdayTotal.setText("Total Step Count: " + ((yesActive) + (yesPassive)));
     }
 
     public static HomeActivity getInstace() {
         return homeActivityRunningInstance;
     }
 
-    public void updateYesterday(final int active, final int passive, final int workout) {
-        HomeActivity.this.runOnUiThread(new Runnable() {
-            public void run() {
-                yesterdayActive.setText("Active Step: " + active);
-                yesterdayPassive.setText("Passive Steps: " + passive);
-                yesterdayWorkouts.setText("Workouts: " + workout);
-                yesterdayTotal.setText("Total Step Count: "+ (active+passive));
-            }
-        });
-    }
+    int a, b ,c;
 
     public void updateToday(final int active, final int passive, final int workoutM) {
         HomeActivity.this.runOnUiThread(new Runnable() {
@@ -135,13 +138,27 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 todayActiveTv.setText("Active Step: " + (active));
                 todayPassiveTv.setText("Passive Steps: " + (passive));
                 activeWorkouts.setText("Workouts: " + (workoutM));
-                Log.d(TAG, "Active Steps: "+activeSteps+"  YesterdayActiveStep: "+active+"  To be set: "+(activeSteps-active));
-                Log.d(TAG, "Passive Steps: "+passiveSub+"  YesterdayPassiveStep: "+passive+"  To be set: "+(passiveSub-passive));
-                Log.d(TAG, "Active Workouts: "+workout+"  YesterdayWorkout: "+workoutM+"  To be set: "+(workout-workoutM));
+                todayTotal.setText("Total Step Count: "+(active+passive));
+                a= active;
+                b= passive;
+                c= workoutM;
+            }
+        });
+    }
+
+    public void updateYesterday(final int active, final int passive, final int workoutY) {
+        HomeActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                yesterdayActive.setText("Active Step: " + (active));
+                yesterdayPassive.setText("Passive Steps: " + (passive));
+                yesterdayWorkouts.setText("Workouts: " + (workoutY));
+                yesterdayTotal.setText("Total Step Count: "+ (active+passive));
 
             }
         });
     }
+
+
 
     @Override
     protected void onResume() {
@@ -166,18 +183,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if (requestCode == 1 && resultCode == RESULT_OK) {
             totalActiveSteps = totalActiveSteps + data.getIntExtra("result", 0);
             totalWorkouts = data.getIntExtra("workoutCount", 0);
-            todayActiveTv.setText("Active Steps : " + (totalActiveSteps - getSharedPreferences("YesterdayActiveInfo", 0).getInt("YesterdayActiveSteps", 0)));
-            activeWorkouts.setText("Workouts: " +(totalWorkouts - (getSharedPreferences("YesterdayWorkoutInfo",0).getInt("YesterdayWorkout",0)) ));
+
             //saving active steps
             editor1 = sharedPreferencesActive.edit();
             editor1.putLong("Timestamp", Calendar.getInstance().getTimeInMillis());
             editor1.putInt("ActiveSteps", totalActiveSteps);
             editor1.commit();
+
             //saving today's workouts
             sharedPreferencesWorkout = getSharedPreferences("WorkoutInfo", 0);
             editor4 = sharedPreferencesWorkout.edit();
             editor4.putInt("WorkoutCount", totalWorkouts);
             editor4.commit();
+
+            todayActiveTv.setText("Active Steps: " + (totalActiveSteps - copyActiveSP.getInt("CopyActive",0)));
+            activeWorkouts.setText("Workouts: " +(sharedPreferencesWorkout.getInt("WorkoutCount",0)  - copyActiveSP.getInt("CopyActive",0)));
+
+            //TODAY STEP COUNT
+            todayTotal.setText("Total Step Count: "+ ((activeSteps - copyActiveSP.getInt("CopyActive",0))+(getSharedPreferences("PassiveSubInfo",0).getInt("PassiveSubSteps",0) -  copyPassiveSP.getInt("CopyPassive",0))));
+
         }
     }
 
@@ -185,8 +209,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onSensorChanged(SensorEvent event) {
         totalPassiveSteps = (int) (event.values[0]);
         int diffInSteps = (totalPassiveSteps - totalActiveSteps);
-//        todayPassiveTv.setText("Passive steps: " + (diffInSteps - getSharedPreferences("YesterdayPassiveInfo", 0).getInt("YesterdayPassiveSteps", 0)));
-        todayPassiveTv.setText("Passive Steps: "+(getSharedPreferences("PassiveSubInfo",0).getInt("PassiveSubSteps",0) - (getSharedPreferences("YesterdayPassiveInfo",0).getInt("YesterdayPassiveSteps",0))));
+
+        todayPassiveTv.setText("Passive steps: " + (diffInSteps -  copyPassiveSP.getInt("CopyPassive",0)));
+
+//  todayPassiveTv.setText("Passive Steps: "+((getSharedPreferences("PassiveSubInfo",0).getInt("PassiveSubSteps",0))-(getSharedPreferences("YesterdayPassiveInfo",0).getInt("YesterdayPassiveSteps",0))));
         //saving passive steps,timestamp
         editor2 = sharedPreferences.edit();
         editor2.putLong("Timestamp", Calendar.getInstance().getTimeInMillis());
@@ -198,6 +224,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         editor3.putInt("PassiveSubSteps", diffInSteps);
         editor3.commit();
 
+        //TODAY STEP COUNT
+        todayTotal.setText("Total Step Count: "+ ((getSharedPreferences("ActiveStepsInfo",0).getInt("ActiveSteps",0) -  copyActiveSP.getInt("CopyActive",0))
+                +(getSharedPreferences("PassiveSubInfo",0).getInt("PassiveSubSteps",0) - copyPassiveSP.getInt("CopyPassive",0))));
     }
 
     @Override
@@ -205,21 +234,5 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void setAlarm() {
-        getSharedPreferences("AlarmInfo", MODE_PRIVATE).edit()
-                .putBoolean("isAlarmSet", true).commit();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-
-        if(calendar.getTimeInMillis()>System.currentTimeMillis()) {
-            Intent intent = new Intent(HomeActivity.this, MyBroadcastReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),1000 * 60 * 60 * 24, pendingIntent);
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        }
-    }
 }

@@ -65,11 +65,20 @@
         android:id="@+id/tv_today_passive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
         android:fontFamily="@font/expressway"
-        android:paddingBottom="15dp"
         android:text="Passive Steps: "
         android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/tv_total_today"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/expressway"
+        android:layout_marginBottom="20dp"
+        android:paddingBottom="15dp"
+        android:text="Total step count:"
+        android:textColor="@android:color/black" />
+
 
 
     <TextView
